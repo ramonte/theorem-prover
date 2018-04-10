@@ -3,13 +3,17 @@ import copy
 import numpy as np
 
 def main():
-    string = ')+12*-13'
+    # string = ')+12*-13'
+    string = ')*-)12+3-23'
     tree, st = create_tree(string)
     print (str(tree))
 
 def create_tree(prop):
     print (prop)
-    if (len(prop) == 0):
+    if (prop):
+        if (len(prop) == 0):
+            return None, None
+    else:
         return None, None
     token = prop[0]
     node = Node(token)
@@ -18,10 +22,11 @@ def create_tree(prop):
         node.right = None
         return node, prop[1:]
     else:
-        print ('e')
-        node.left, st = create_tree(prop[1:])
-        print ('d')
-        node.right, st = create_tree(st)
+        if (token != '-'):
+            node.left, st = create_tree(prop[1:])
+            node.right, st = create_tree(st)
+        else:
+            node.right, st = create_tree(prop[1:])
     return node, st
 
 

@@ -23,5 +23,7 @@ class Node:
             r += '(' + str(self.left)
         r += self.str_token()
         if (self.right):
-            r += str(self.right) + ')'
+            r += str(self.right)
+            if (self.token != '-'):
+                r += ')'
         return r
