@@ -1,5 +1,6 @@
 from node import Node
 import argparse
+import basic
 import copy
 import numpy as np
 
@@ -12,13 +13,8 @@ def main():
 
     args = parser.parse_args()
     formulas = read_formulas(args.f)
-
-    for f in formulas:
-        print (f)
-    # string = ')+12*-13'
-    # string = ')*-)12+3-23'
-    # tree, st = create_tree(string)
-    # print (str(tree))
+    b = basic.compute(formulas)
+    print (b)
 
 def create_tree(prop):
     if (prop):
@@ -41,7 +37,7 @@ def create_tree(prop):
     return node, st
 
 def read_formulas(filename):
-    lines = [line.rstrip('\n') for line in open(filename)]
+    lines = [line.rstrip('\n').replace(' ', '') for line in open(filename)]
 
     if not (lines[0].isdigit()):
         raise Exception('The first argument in the file must be a number')

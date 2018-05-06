@@ -1,10 +1,46 @@
-class Node:
+import expansions
 
+class Node:
     def __init__(self, token, left = None, right = None):
         self.token = token
         self.left = left
         self.right = right
         self.valuation = None
+        self.expanded = False
+
+    def is_alpha(self):
+        if (self.valuation == True):
+            return (self.token == '-' or self.token == '*')
+        else:
+            return (self.token == '-' or self.token == '+' or self.token == ')')
+
+    def is_atom(self):
+        return not (self.token == ')' or self.token == '*' or self.token == '+' or self.token == '-')
+
+    def expand(self):
+        self.expanded = True
+        if (self.token == ')'):
+            if (self.valuation == True):
+                return expansions.t_impl(self)
+            else:
+                return expansions.f_impl(self)
+        elif (self.token == '*'):
+            if (self.valuation == True):
+                return expansions.t_and(self)
+            else:
+                return expansions.f_and(self)
+        elif (self.token == '+'):
+            if (self.valuation == True):
+                return expansions.t_or(self)
+            else:
+                return expansions.f_or(self)
+        elif (self.token == '-'):
+            if (self.valuation == True):
+                return expansions.t_neg(self)
+            else:
+                return expansions.f_neg(self)
+        else:
+            raise Exception('Um átomo não pode ser expandido.')
 
     def str_token(self):
         if (self.token == ')'):
