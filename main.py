@@ -15,7 +15,7 @@ def main():
 
     args = parser.parse_args()
     formulas = read_formulas(args.f)
-    if (args.improved):
+    if (args.i):
         b, branches = improved.compute(formulas)
     else:
         b, branches = basic.compute(formulas)
