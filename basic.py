@@ -4,16 +4,16 @@ from node import Node
 branches = 1
 
 def compute(formulas):
-    print ('\n-------')
     for f in formulas:
         print (f)
+    print ('\n-------')
     expand_alpha(formulas)
     if (closed(formulas)):
         return True
     beta = get_last_beta(formulas)
     if (beta == None):
         if (not closed(formulas)):
-            return False
+            return get_valuation(formulas)
         return True
     else:
         c1, c2 = beta.expand()
@@ -21,11 +21,11 @@ def compute(formulas):
         f1.append(c1)
         f2.append(c2)
         b1 = compute(deepcopy(f1))
-        if (b1 == False):
-            return False
+        if (b1 != True):
+            return b1
         b2 = compute(deepcopy(f2))
-        if (b1 != True or b2 != True):
-            return False
+        if (b2 != True):
+            return b2
         else:
             return True
 
@@ -57,3 +57,10 @@ def has_absurd(atom, formulas):
                 if (atom.valuation != formula.valuation):
                     return True
     return False
+
+def get_valuation(formulas):
+    valuation = []
+    for f in formulas:
+        if (f.is_atom()):
+            valuation.append('{}: {}'.format(f.token, f.valuation))
+    return valuation

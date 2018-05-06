@@ -14,7 +14,10 @@ def main():
     args = parser.parse_args()
     formulas = read_formulas(args.f)
     b = basic.compute(formulas)
-    print (b)
+    if (b == True):
+        print ('\ntrue')
+    else:
+        print ('\nfalse for:', b)
 
 def create_tree(prop):
     if (prop):
