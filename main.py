@@ -13,11 +13,12 @@ def main():
 
     args = parser.parse_args()
     formulas = read_formulas(args.f)
-    b = basic.compute(formulas)
+    b, branches = basic.compute(formulas)
     if (b == True):
         print ('\ntrue')
     else:
         print ('\nfalse for:', b)
+    print ('branches: ', branches)
 
 def create_tree(prop):
     if (prop):

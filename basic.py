@@ -1,33 +1,36 @@
 from copy import deepcopy
 from node import Node
 
-branches = 1
+branches = 0
 
 def compute(formulas):
+    global branches
     for f in formulas:
         print (f)
     print ('\n-------')
     expand_alpha(formulas)
     if (closed(formulas)):
-        return True
+        branches += 1
+        return True, branches
     beta = get_last_beta(formulas)
     if (beta == None):
+        branches += 1
         if (not closed(formulas)):
-            return get_valuation(formulas)
-        return True
+            return get_valuation(formulas), branches
+        return True, branches
     else:
         c1, c2 = beta.expand()
         f1, f2 = deepcopy(formulas), deepcopy(formulas)
         f1.append(c1)
         f2.append(c2)
-        b1 = compute(deepcopy(f1))
+        b1, _ = compute(deepcopy(f1))
         if (b1 != True):
-            return b1
-        b2 = compute(deepcopy(f2))
+            return b1, branches
+        b2, _ = compute(deepcopy(f2))
         if (b2 != True):
-            return b2
+            return b2, branches
         else:
-            return True
+            return True, branches
 
 def expand_alpha(formulas):
     for formula in formulas:
