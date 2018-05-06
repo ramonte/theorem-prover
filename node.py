@@ -17,6 +17,14 @@ class Node:
     def is_atom(self):
         return not (self.token == ')' or self.token == '*' or self.token == '+' or self.token == '-')
 
+    def get_size(self):
+        size = 1
+        if (self.right != None):
+            size += self.right.get_size()
+        if (self.left != None):
+            size += self.left.get_size()
+        return size
+
     def expand(self):
         self.expanded = True
         if (self.token == ')'):

@@ -1,19 +1,24 @@
 from node import Node
 import argparse
 import basic
+import improved
 import copy
 import numpy as np
 
 def main():
-    parser = argparse.ArgumentParser(description='Tableaux')
+    parser = argparse.ArgumentParser(description='Analytic tableaux')
 
     ''' required arguments '''
     required = parser.add_argument_group('required arguments')
     required.add_argument('-f', help='path to file', required=True)
+    required.add_argument('-i', help='use improved', action='store_true')
 
     args = parser.parse_args()
     formulas = read_formulas(args.f)
-    b, branches = basic.compute(formulas)
+    if (args.improved):
+        b, branches = improved.compute(formulas)
+    else:
+        b, branches = basic.compute(formulas)
     if (b == True):
         print ('\ntrue')
     else:

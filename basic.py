@@ -8,8 +8,8 @@ def compute(formulas):
     for f in formulas:
         print (f)
     print ('\n-------')
-    expand_alpha(formulas)
-    if (closed(formulas)):
+    end = expand_alpha(formulas)
+    if (end == True or closed(formulas)):
         branches += 1
         return True, branches
     beta = get_last_beta(formulas)
@@ -23,10 +23,10 @@ def compute(formulas):
         f1, f2 = deepcopy(formulas), deepcopy(formulas)
         f1.append(c1)
         f2.append(c2)
-        b1, _ = compute(deepcopy(f1))
+        b1, _ = compute(f1)
         if (b1 != True):
             return b1, branches
-        b2, _ = compute(deepcopy(f2))
+        b2, _ = compute(f2)
         if (b2 != True):
             return b2, branches
         else:
@@ -37,7 +37,11 @@ def expand_alpha(formulas):
         if (formula.is_alpha() and not formula.is_atom() and not formula.expanded):
             c1, c2 = formula.expand()
             formulas.append(c1)
-            if (c2 != None): formulas.append(c2)
+            if (closed(formulas)): return True
+            if (c2 != None):
+                formulas.append(c2)
+            if (closed(formulas)): return True
+    return False
 
 def get_last_beta(formulas):
     for formula in list(reversed(formulas)):
