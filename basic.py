@@ -2,9 +2,15 @@ from copy import deepcopy
 from node import Node
 
 branches = 0
+counter = 0
+
+def start(formulas):
+    global counter
+    value, brnchs = compute(formulas)
+    return (value, brnchs, counter)
 
 def compute(formulas):
-    global branches
+    global branches, counter
     for f in formulas:
         print (f)
     print ('\n-------')
@@ -24,6 +30,7 @@ def compute(formulas):
         f1.append(c1)
         f2.append(c2)
         b1, _ = compute(f1)
+        counter += 1
         if (b1 != True):
             return b1, branches
         b2, _ = compute(f2)
@@ -33,9 +40,11 @@ def compute(formulas):
             return True, branches
 
 def expand_alpha(formulas):
+    global counter
     for formula in formulas:
         if (formula.is_alpha() and not formula.is_atom() and not formula.expanded):
             c1, c2 = formula.expand()
+            counter += 1
             formulas.append(c1)
             if (closed(formulas)): return True
             if (c2 != None):

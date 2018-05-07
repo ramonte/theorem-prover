@@ -7,23 +7,23 @@ import numpy as np
 
 def main():
     parser = argparse.ArgumentParser(description='Analytic tableaux')
+    parser.add_argument('-i', help='use improved version', action='store_true')
 
     ''' required arguments '''
     required = parser.add_argument_group('required arguments')
     required.add_argument('-f', help='path to file', required=True)
-    required.add_argument('-i', help='use improved', action='store_true')
 
     args = parser.parse_args()
     formulas = read_formulas(args.f)
     if (args.i):
-        b, branches = improved.compute(formulas)
+        value, branches, rules = improved.start(formulas)
     else:
-        b, branches = basic.compute(formulas)
-    if (b == True):
-        print ('\ntrue')
+        value, branches, rules = basic.start(formulas)
+    if (value == True):
+        print ('\ntrue!')
     else:
-        print ('\nfalse for:', b)
-    print ('branches: ', branches)
+        print ('\nfalse for:', value)
+    print ('branches:', branches, '| rules applied:', rules)
 
 def create_tree(prop):
     if (prop):

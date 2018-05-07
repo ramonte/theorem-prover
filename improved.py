@@ -2,9 +2,15 @@ from copy import deepcopy
 from node import Node
 
 branches = 0
+counter = 0
+
+def start(formulas):
+    global counter
+    value, brnchs = compute(formulas)
+    return (value, brnchs, counter)
 
 def compute(formulas):
-    global branches
+    global branches, counter
     for f in formulas:
         print (f)
     print ('\n-------')
@@ -25,6 +31,7 @@ def compute(formulas):
         f1.append(c1)
         f2.append(c2)
         b1, _ = compute(f1)
+        counter += 1
         if (b1 != True):
             return b1, branches
         b2, _ = compute(f2)
@@ -34,9 +41,11 @@ def compute(formulas):
             return True, branches
 
 def expand_alpha(formulas):
+    global counter
     for formula in formulas:
         if (formula.is_alpha() and not formula.is_atom() and not formula.expanded):
             c1, c2 = formula.expand()
+            counter += 1
             formulas.append(c1)
             if (closed(formulas)): return True
             if (c2 != None):
@@ -63,24 +72,23 @@ def get_best_beta(formulas):
     betas = get_betas(formulas)
     if (len(betas) == 0): return None
     betas_with_subformulas = []
-    str_formulas = []
-    for i in range(len(formulas)):
-        str_formulas.append((i, str(formulas[i])[1::]))
     for i in range(len(betas)):
         beta = deepcopy(betas[i])
-        beta1, beta2 = beta.expand()
-        value1, value2 = str(beta1)[1::], str(beta2)[1::]
-        index = list_contains(str_formulas, value1)
-        if (index != -1):
-            formula = formulas[index]
-            if (formula.valuation != beta1.valuation):
-                betas_with_subformulas.append(betas[i])
-        else:
-            index = list_contains(str_formulas, value2)
-            if (index != -1):
-                formula = formulas[index]
-                if (formula.valuation != beta2.valuation):
-                    betas_with_subformulas.append(betas[i])
+        if (has_subformulas(formulas, beta)):
+            betas_with_subformulas.append(betas[i])
+        # beta1, beta2 = beta.expand()
+        # value1, value2 = str(beta1)[1::], str(beta2)[1::]
+        # index = list_contains(str_formulas, value1)
+        # if (index != -1):
+        #     formula = formulas[index]
+        #     if (formula.valuation != beta1.valuation):
+        #         betas_with_subformulas.append(betas[i])
+        # else:
+        #     index = list_contains(str_formulas, value2)
+        #     if (index != -1):
+        #         formula = formulas[index]
+        #         if (formula.valuation != beta2.valuation):
+        #             betas_with_subformulas.append(betas[i])
     if (len(betas_with_subformulas) == 0):
         return get_smaller_beta(betas)
     elif (len(betas_with_subformulas) == 1):
@@ -117,6 +125,27 @@ def get_valuation(formulas):
         if (f.is_atom()):
             valuation.append('{}: {}'.format(f.token, f.valuation))
     return valuation
+
+def has_subformulas(formulas, beta):
+    if (beta.is_atom()):
+        return False
+    str_formulas = []
+    for i in range(len(formulas)):
+        str_formulas.append((i, str(formulas[i])[1::]))
+    beta1, beta2 = beta.expand()
+    value1, value2 = str(beta1)[1::], str(beta2)[1::]
+    index = list_contains(str_formulas, value1)
+    if (index != -1):
+        formula = formulas[index]
+        if (formula.valuation != beta1.valuation):
+            return True
+    else:
+        index = list_contains(str_formulas, value2)
+        if (index != -1):
+            formula = formulas[index]
+            if (formula.valuation != beta2.valuation):
+                return True
+    return (has_subformulas(formulas, beta1) or has_subformulas(formulas, beta2))
 
 def list_contains(plist, value):
     for (idx, string) in plist:
