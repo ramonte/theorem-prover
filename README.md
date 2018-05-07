@@ -3,7 +3,7 @@
 Python3.5 implementation for the method of analytic tableaux. @ OPAT - UDESC
 
 ## Run
--f [path]: path to file
+-f [path]: path to file\n
 -i: use improved version (optional)
 ```
 > python3.5 main.py -f examples/input_.seq [-i]
