@@ -12,7 +12,8 @@ def compute(formulas):
     if (end == True or closed(formulas)):
         branches += 1
         return True, branches
-    beta = get_smaller_beta(formulas)
+    # beta = get_smaller_beta(formulas)
+    beta = get_best_beta(formulas)
     if (beta == None):
         branches += 1
         if (not closed(formulas)):
@@ -50,13 +51,42 @@ def get_last_beta(formulas):
     return None
 
 def get_smaller_beta(formulas):
-    betas = get_betas(formulas)
-    if (len(betas) == 0):
-        return None
+    # betas = get_betas(formulas)
+    betas = formulas
+    if (len(betas) == 0): return None
     betas.sort(key=lambda x: x.get_size())
-    for b in betas:
-        print ('-- ', b)
+    for beta in betas:
+        print ('-- ', beta)
     return betas[0]
+
+def get_best_beta(formulas):
+    betas = get_betas(formulas)
+    if (len(betas) == 0): return None
+    betas_with_subformulas = []
+    str_formulas = []
+    for i in range(len(formulas)):
+        str_formulas.append((i, str(formulas[i])[1::]))
+    for i in range(len(betas)):
+        beta = deepcopy(betas[i])
+        beta1, beta2 = beta.expand()
+        value1, value2 = str(beta1)[1::], str(beta2)[1::]
+        index = list_contains(str_formulas, value1)
+        if (index != -1):
+            formula = formulas[index]
+            if (formula.valuation != beta1.valuation):
+                betas_with_subformulas.append(betas[i])
+        else:
+            index = list_contains(str_formulas, value2)
+            if (index != -1):
+                formula = formulas[index]
+                if (formula.valuation != beta2.valuation):
+                    betas_with_subformulas.append(betas[i])
+    if (len(betas_with_subformulas) == 0):
+        return get_smaller_beta(betas)
+    elif (len(betas_with_subformulas) == 1):
+        return betas_with_subformulas[0]
+    else:
+        return get_smaller_beta(betas_with_subformulas)
 
 def get_betas(formulas):
     betas = []
@@ -87,3 +117,9 @@ def get_valuation(formulas):
         if (f.is_atom()):
             valuation.append('{}: {}'.format(f.token, f.valuation))
     return valuation
+
+def list_contains(plist, value):
+    for (idx, string) in plist:
+        if (value == string):
+            return idx
+    return -1
