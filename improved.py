@@ -133,6 +133,8 @@ def has_subformulas(formulas, beta):
     for i in range(len(formulas)):
         str_formulas.append((i, str(formulas[i])[1::]))
     beta1, beta2 = beta.expand()
+    if (beta1 == None or beta2 == None):
+        return False
     value1, value2 = str(beta1)[1::], str(beta2)[1::]
     index = list_contains(str_formulas, value1)
     if (index != -1):

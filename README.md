@@ -18,3 +18,4 @@ Python3.5 implementation for the method of analytic tableaux. @ OPAT - UDESC
 5. ¬p v q, ¬q v r |= ¬p v r
 6. p v q, p -> r, q -> (r v s) |= r
 7. (p -> (q -> r)) -> ((p -> q) -> (p -> r)) is true
+8. (p v q v r)^(¬p v q v r)^(p v ¬q v r)^(p v q v ¬r)^(¬p v ¬q v r)^(¬p v q v ¬r)^(p v ¬q v ¬r)^(¬p v ¬q v ¬r)

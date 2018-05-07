@@ -57,9 +57,10 @@ def read_formulas(filename):
         node.valuation = True
         formulas.append(node)
 
-    last, _ = create_tree(lines[len(lines)-1])
-    last.valuation = False
-    formulas.append(last)
+    if (1 + int(lines[0]) != len(lines)):
+        last, _ = create_tree(lines[len(lines)-1])
+        last.valuation = False
+        formulas.append(last)
     return formulas
 
 if __name__ == '__main__':
