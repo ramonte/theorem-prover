@@ -6,50 +6,59 @@ counter = 0
 
 def start(formulas):
     global counter
-    value, brnchs = compute(formulas)
-    return (value, brnchs, counter)
+    counter = len(formulas)
+    value = compute(formulas)
+    return (value, branches, counter)
 
 def compute(formulas):
     global branches, counter
-    for f in formulas:
-        print (f)
-    print ('\n-------')
+    for formula in formulas:
+        print (str(formula))
     end = expand_alpha(formulas)
+    print ('----------------------------------\n')
     if (end == True or closed(formulas)):
         branches += 1
-        return True, branches
-    # beta = get_smaller_beta(formulas)
+        return True
     beta = get_best_beta(formulas)
     if (beta == None):
         branches += 1
         if (not closed(formulas)):
-            return get_valuation(formulas), branches
-        return True, branches
+            return get_valuation(formulas)
+        return True
     else:
         c1, c2 = beta.expand()
         f1, f2 = deepcopy(formulas), deepcopy(formulas)
-        f1.append(c1)
-        f2.append(c2)
-        b1, _ = compute(f1)
-        counter += 1
-        if (b1 != True):
-            return b1, branches
-        b2, _ = compute(f2)
-        if (b2 != True):
-            return b2, branches
-        else:
-            return True, branches
+        if (not exists(c1, formulas)):
+            f1.append(c1)
+            counter += 1
+            b1 = compute(f1)
+            if (b1 != True):
+                return b1
+        if (not exists(c2, formulas)):
+            f2.append(c2)
+            counter += 1
+            b2 = compute(f2)
+            if (b2 != True):
+                return b2
+            else:
+                return True
+        return True
 
 def expand_alpha(formulas):
     global counter
     for formula in formulas:
         if (formula.is_alpha() and not formula.is_atom() and not formula.expanded):
             c1, c2 = formula.expand()
-            counter += 1
-            formulas.append(c1)
+            if (not exists(c1, formulas)):
+                print (str(c1))
+                counter += 1
+                formulas.append(c1)
             if (closed(formulas)): return True
             if (c2 != None):
-                formulas.append(c2)
+                if (not exists(c2, formulas)):
+                    print (str(c2))
+                    counter += 1
+                    formulas.append(c2)
             if (closed(formulas)): return True
     return False
 
@@ -60,12 +69,9 @@ def get_last_beta(formulas):
     return None
 
 def get_smaller_beta(formulas):
-    # betas = get_betas(formulas)
     betas = formulas
     if (len(betas) == 0): return None
     betas.sort(key=lambda x: x.get_size())
-    for beta in betas:
-        print ('-- ', beta)
     return betas[0]
 
 def get_best_beta(formulas):
@@ -76,19 +82,6 @@ def get_best_beta(formulas):
         beta = deepcopy(betas[i])
         if (has_subformulas(formulas, beta)):
             betas_with_subformulas.append(betas[i])
-        # beta1, beta2 = beta.expand()
-        # value1, value2 = str(beta1)[1::], str(beta2)[1::]
-        # index = list_contains(str_formulas, value1)
-        # if (index != -1):
-        #     formula = formulas[index]
-        #     if (formula.valuation != beta1.valuation):
-        #         betas_with_subformulas.append(betas[i])
-        # else:
-        #     index = list_contains(str_formulas, value2)
-        #     if (index != -1):
-        #         formula = formulas[index]
-        #         if (formula.valuation != beta2.valuation):
-        #             betas_with_subformulas.append(betas[i])
     if (len(betas_with_subformulas) == 0):
         return get_smaller_beta(betas)
     elif (len(betas_with_subformulas) == 1):
@@ -133,8 +126,6 @@ def has_subformulas(formulas, beta):
     for i in range(len(formulas)):
         str_formulas.append((i, str(formulas[i])[1::]))
     beta1, beta2 = beta.expand()
-    if (beta1 == None or beta2 == None):
-        return False
     value1, value2 = str(beta1)[1::], str(beta2)[1::]
     index = list_contains(str_formulas, value1)
     if (index != -1):
@@ -147,7 +138,21 @@ def has_subformulas(formulas, beta):
             formula = formulas[index]
             if (formula.valuation != beta2.valuation):
                 return True
-    return (has_subformulas(formulas, beta1) or has_subformulas(formulas, beta2))
+    if (not beta1.is_atom() and not beta1.is_alpha()):
+        if (not beta2.is_atom() and not beta2.is_alpha()):
+            return (has_subformulas(formulas, beta1) or has_subformulas(formulas, beta2))
+        else:
+            return (has_subformulas(formulas, beta1))
+    elif (not beta2.is_atom() and not beta2.is_alpha()):
+        return (has_subformulas(formulas, beta2))
+    else:
+        return False
+
+def exists(child, formulas):
+    for f in formulas:
+        if (str(child) == str(f)):
+            return True
+    return False
 
 def list_contains(plist, value):
     for (idx, string) in plist:

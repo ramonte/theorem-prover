@@ -23,7 +23,7 @@ def main():
         print ('\ntrue!')
     else:
         print ('\nfalse for:', value)
-    print ('branches:', branches, '| rules applied:', rules)
+    print ('branches:', branches, '| nodes:', rules)
 
 def create_tree(prop):
     if (prop):
