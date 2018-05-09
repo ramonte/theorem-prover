@@ -13,7 +13,7 @@ def start(formulas):
 def compute(formulas):
     global branches, counter
     for formula in formulas:
-        print (str(formula))
+        print ('X ' if formula.expanded else '  ', str(formula))
     end = expand_alpha(formulas)
     print ('----------------------------------\n')
     if (end == True or closed(formulas)):

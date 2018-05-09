@@ -13,7 +13,7 @@ def start(formulas):
 def compute(formulas):
     global branches, counter
     for formula in formulas:
-        print (str(formula))
+        print ('X ' if formula.expanded else '  ', str(formula))
     end = expand_alpha(formulas)
     print ('----------------------------------\n')
     if (end == True or closed(formulas)):
@@ -71,7 +71,10 @@ def get_last_beta(formulas):
 def get_smaller_beta(formulas):
     betas = formulas
     if (len(betas) == 0): return None
-    betas.sort(key=lambda x: x.get_size())
+    sbetas = sorted(betas, key=lambda x: x.get_size())
+    if (len(sbetas) > 1):
+        if (sbetas[0].get_size() == sbetas[1].get_size()):
+            return None
     return betas[0]
 
 def get_best_beta(formulas):
@@ -83,11 +86,20 @@ def get_best_beta(formulas):
         if (has_subformulas(formulas, beta)):
             betas_with_subformulas.append(betas[i])
     if (len(betas_with_subformulas) == 0):
-        return get_smaller_beta(betas)
+        smaller = get_smaller_beta(betas)
+        if (smaller != None):
+            return smaller
+        else:
+            return get_last_beta(formulas)
     elif (len(betas_with_subformulas) == 1):
         return betas_with_subformulas[0]
     else:
-        return get_smaller_beta(betas_with_subformulas)
+        # return get_smaller_beta(betas_with_subformulas)
+        smaller = get_smaller_beta(betas_with_subformulas)
+        if (smaller != None):
+            return smaller
+        else:
+            return get_last_beta(formulas)
 
 def get_betas(formulas):
     betas = []
