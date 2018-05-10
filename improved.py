@@ -12,14 +12,15 @@ def start(formulas):
 
 def compute(formulas):
     global branches, counter
-    for formula in formulas:
-        print ('X ' if formula.expanded else '  ', str(formula))
+    # for formula in formulas:
+    #     print ('X ' if formula.expanded else '  ', str(formula))
     end = expand_alpha(formulas)
-    print ('----------------------------------\n')
+    # print ('----------------------------------\n')
     if (end == True or closed(formulas)):
         branches += 1
         return True
-    beta = get_best_beta(formulas)
+    # beta = get_best_beta(formulas)
+    beta = get_smaller_beta(get_betas(formulas))
     if (beta == None):
         branches += 1
         if (not closed(formulas)):
@@ -50,13 +51,13 @@ def expand_alpha(formulas):
         if (formula.is_alpha() and not formula.is_atom() and not formula.expanded):
             c1, c2 = formula.expand()
             if (not exists(c1, formulas)):
-                print (str(c1))
+                # print (str(c1))
                 counter += 1
                 formulas.append(c1)
             if (closed(formulas)): return True
             if (c2 != None):
                 if (not exists(c2, formulas)):
-                    print (str(c2))
+                    # print (str(c2))
                     counter += 1
                     formulas.append(c2)
             if (closed(formulas)): return True
@@ -72,9 +73,9 @@ def get_smaller_beta(formulas):
     betas = formulas
     if (len(betas) == 0): return None
     sbetas = sorted(betas, key=lambda x: x.get_size())
-    if (len(sbetas) > 1):
-        if (sbetas[0].get_size() == sbetas[1].get_size()):
-            return None
+    # if (len(sbetas) > 1):
+        # if (sbetas[0].get_size() == sbetas[1].get_size()):
+            # return None
     return betas[0]
 
 def get_best_beta(formulas):

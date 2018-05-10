@@ -29,15 +29,23 @@ def create_tree(prop):
     if (prop):
         if (len(prop) == 0):
             return None, None
+        if (prop[0] == ' '):
+            prop = prop[1:]
     else:
         return None, None
     token = prop[0]
-    node = Node(token)
     if (token.isdigit()):
+        size = 1
+        if (len(prop) > 1):
+            if (prop[1].isdigit()):
+                token += prop[1]
+                size = 2
+        node = Node(token)
         node.left = None
         node.right = None
-        return node, prop[1:]
+        return node, prop[size:]
     else:
+        node = Node(token)
         if (token != '-'):
             node.left, st = create_tree(prop[1:])
             node.right, st = create_tree(st)
@@ -46,7 +54,7 @@ def create_tree(prop):
     return node, st
 
 def read_formulas(filename):
-    lines = [line.rstrip('\n').replace(' ', '') for line in open(filename)]
+    lines = [line.rstrip('\n') for line in open(filename)]
 
     if not (lines[0].isdigit()):
         raise Exception('The first argument in the file must be a number')

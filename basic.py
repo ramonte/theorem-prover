@@ -12,10 +12,10 @@ def start(formulas):
 
 def compute(formulas):
     global branches, counter
-    for formula in formulas:
-        print ('X ' if formula.expanded else '  ', str(formula))
+    # for formula in formulas:
+    #     print ('X ' if formula.expanded else '  ', str(formula))
     end = expand_alpha(formulas)
-    print ('----------------------------------\n')
+    # print ('----------------------------------\n')
     if (end == True or closed(formulas)):
         branches += 1
         return True
@@ -48,11 +48,11 @@ def expand_alpha(formulas):
             c1, c2 = formula.expand()
             counter += 1
             formulas.append(c1)
-            print (c1)
+            # print (c1)
             if (closed(formulas)): return True
             if (c2 != None):
                 counter += 1
-                print (c2)
+                # print (c2)
                 formulas.append(c2)
             if (closed(formulas)): return True
     return False
