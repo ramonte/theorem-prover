@@ -12,6 +12,7 @@ def start(formulas):
 
 def compute(formulas):
     global branches, counter
+    remove_expanded(formulas)
     # for formula in formulas:
     #     print ('X ' if formula.expanded else '  ', str(formula))
     end = expand_alpha(formulas)
@@ -19,28 +20,32 @@ def compute(formulas):
     if (end == True or closed(formulas)):
         branches += 1
         return True
-    # beta = get_best_beta(formulas)
-    beta = get_smaller_beta(get_betas(formulas))
+    beta = get_best_beta(formulas)
     if (beta == None):
         branches += 1
         if (not closed(formulas)):
             return get_valuation(formulas)
         return True
     else:
-        c1, c2 = beta.expand()
-        f1, f2 = deepcopy(formulas), deepcopy(formulas)
-        if (not exists(c1, formulas)):
-            f1.append(c1)
-            counter += 1
-            b1 = compute(f1)
-            if (b1 != True):
-                return b1
+        if (beta.expanded == True):
+            c1, c2 = beta.left, beta.right
+        else:
+            c1, c2 = beta.expand()
+        new_branch = None
         if (not exists(c2, formulas)):
-            f2.append(c2)
+            new_branch = deepcopy(formulas)
+        if (not exists(c1, formulas)):
+            formulas.append(c1)
             counter += 1
-            b2 = compute(f2)
-            if (b2 != True):
-                return b2
+            branch1 = compute(formulas)
+            if (branch1 != True):
+                return branch1
+        if (new_branch != None):
+            new_branch.append(c2)
+            counter += 1
+            branch2 = compute(new_branch)
+            if (branch2 != True):
+                return branch2
             else:
                 return True
         return True
@@ -110,8 +115,8 @@ def get_betas(formulas):
     return betas
 
 def closed(formulas):
-    last_atom = formulas[len(formulas)-1]
-    if (has_absurd(last_atom, formulas)):
+    last_formula = formulas[len(formulas)-1]
+    if (has_absurd(last_formula, formulas)):
         return True
     else:
         return False
@@ -119,10 +124,13 @@ def closed(formulas):
 def has_absurd(atom, formulas):
     for i in range(len(formulas) - 1):
         formula = formulas[i]
-        if (formula.is_atom() and not formula.expanded):
-            if (atom.token == formula.token):
-                if (atom.valuation != formula.valuation):
-                    return True
+        if (str(formula)[1:] == str(atom)[1:]):
+            if (atom.valuation != formula.valuation):
+                return True
+        # if (formula.is_atom() and not formula.expanded):
+        #     if (atom.token == formula.token):
+        #         if (atom.valuation != formula.valuation):
+        #             return True
     return False
 
 def get_valuation(formulas):
@@ -172,3 +180,10 @@ def list_contains(plist, value):
         if (value == string):
             return idx
     return -1
+
+def remove_expanded(formulas):
+    new_list = []
+    for formula in formulas:
+        if (formula.expanded == False):
+            new_list.append(formula)
+    return new_list
